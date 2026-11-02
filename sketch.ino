@@ -5,8 +5,11 @@ void setup() {
 
 void loop() {
   static byte counter = 0;
-  static bool prevBtn = false;
+  static byte prevBtn = 0;
 
+  // read push button
+  // btn = 1, if pushed
+  // btn = 0, if not
   byte btn = !(PINB & (1 << 4));
 
   if (btn && !prevBtn) {
