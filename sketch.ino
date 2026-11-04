@@ -1,18 +1,23 @@
+const int SPEED_STEP = 50;
+const int SPEED_INIT = 300;
+
 void setup() {
   Serial.begin(9600); // setup serial
+  Serial.println("Current Speed: " + String(SPEED_INIT));
+  
   DDRD = 0xF0; // set output pins
+  PORTD = 0;
 }
 
-const int fastSpeed = 100, slowSpeed = 300;
-
 void loop() {
-  static bool goFast = false, toRight = true;
+  static int speed = SPEED_INIT;
+  static bool toRight = true;
   static byte led = 1;
 
   // shift led
   if (toRight) led <<= 1;
   else led >>= 1;
-
+  // change direction if reached the end
   if (led == (1 << 3) || led == 1) toRight ^= 1;
 
   PORTD = (PORTD & 0x0F) | (led << 4);
@@ -22,13 +27,19 @@ void loop() {
     char input = Serial.read();
 
     if (input == 'f' || input == 's') {
-      goFast = (input == 'f');
+      // change speed on input
+      if (input == 'f') speed -= SPEED_STEP;
+      else speed += SPEED_STEP;
 
-      Serial.print("New Speed: ");
-      Serial.print(goFast ? fastSpeed : slowSpeed);
-      Serial.println(" ms");
+      // limit speed to positive value
+      // as delay(-ve) is infinite delay
+      if (speed >= 0) Serial.println("New Speed: " + String(speed) + " ms");
+      else {
+        Serial.println("Speed can not go any lower.");
+        speed = 0;
+      }
     }
   }
   
-  delay(goFast ? fastSpeed : slowSpeed);
+  delay(speed);
 }
