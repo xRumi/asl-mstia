@@ -3,7 +3,7 @@ const int SPEED_INIT = 300;
 
 void setup() {
   Serial.begin(9600); // setup serial
-  Serial.println("Current Speed: " + String(SPEED_INIT));
+  Serial.println("Current Speed: " + String(SPEED_INIT) + " ms");
   
   DDRD = 0xF0; // set output pins
   PORTD = 0;
